@@ -5,4 +5,4 @@ cmds = [
 ]
 
 [start]
-cmd = "python api.py"
+cmd = "mkdir -p /data /app/logs && python api.py"
