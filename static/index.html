@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SG Internship Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">🎓</span>
+          <span class="logo-text">SG Internship Finder</span>
+        </div>
+        <div class="header-stats" id="headerStats">
+          <span class="stat-badge" id="totalCount">Loading…</span>
+          <span class="stat-badge" id="evalCount" style="display:none"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTROLS ===== -->
+  <div class="controls-bar">
+    <div class="container">
+      <div class="controls-inner">
+
+        <div class="search-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="search"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search by title or company…"
+            autocomplete="off"
+          />
+        </div>
+
+        <select id="sourceFilter" class="filter-select">
+          <option value="">All sources</option>
+          <option value="mycareersfuture">MyCareersFuture</option>
+          <option value="jobstreet">JobStreet</option>
+          <option value="internsg">InternSG</option>
+          <option value="careers_gov">Careers@Gov</option>
+        </select>
+
+        <select id="scoreFilter" class="filter-select">
+          <option value="">All scores</option>
+          <option value="High">High match</option>
+          <option value="Medium">Medium match</option>
+          <option value="Low">Low match</option>
+          <option value="unscored">Not yet scored</option>
+        </select>
+
+        <select id="appliedFilter" class="filter-select">
+          <option value="">All jobs</option>
+          <option value="false">Not applied</option>
+          <option value="true">Applied</option>
+        </select>
+
+        <button id="evalBtn" class="btn btn-evaluate" title="Run LLM evaluation on unscored jobs">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               width="16" height="16">
+            <path d="M12 2a10 10 0 1 0 10 10"></path>
+            <path d="M12 6v6l4 2"></path>
+          </svg>
+          Evaluate
+        </button>
+
+        <button id="refreshBtn" class="btn btn-primary" title="Trigger a new scrape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               width="16" height="16">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
+          </svg>
+          Refresh data
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VIEW TABS ===== -->
+  <div class="view-tabs-bar">
+    <div class="container">
+      <nav class="view-tabs" role="tablist">
+        <button class="view-tab active" id="tabJobs" role="tab" aria-selected="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               width="15" height="15">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Find Jobs
+        </button>
+        <button class="view-tab" id="tabApplications" role="tab" aria-selected="false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               width="15" height="15">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          My Applications
+          <span class="tab-badge" id="appliedBadge" style="display:none"></span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main-content">
+    <div class="container">
+
+      <div id="statusBanner" class="status-banner hidden"></div>
+
+      <!-- ── Find Jobs view ───────────────────────────────────────────── -->
+      <div id="jobsView">
+        <div id="resultsInfo" class="results-info"></div>
+        <div id="jobGrid" class="job-grid"></div>
+        <div id="loadMoreWrap" class="load-more-wrap hidden">
+          <button id="loadMoreBtn" class="btn btn-outline">Load more</button>
+        </div>
+        <div id="emptyState" class="empty-state hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <p>No internships found matching your filters.</p>
+          <p class="hint">Try broadening your search or refreshing the data.</p>
+        </div>
+      </div>
+
+      <!-- ── My Applications view ─────────────────────────────────────── -->
+      <div id="applicationsView" class="hidden">
+        <div id="applicationsInfo" class="results-info"></div>
+        <div id="applicationsSummary" class="status-summary hidden"></div>
+        <div id="applicationsGrid" class="job-grid applications-grid"></div>
+        <div id="applicationsEmpty" class="empty-state hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <p>No applications tracked yet.</p>
+          <p class="hint">Open any job and click "Mark as Applied" to start tracking.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===== MODAL ===== -->
+  <div id="jobModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="modal-badges">
+        <span class="modal-source-badge" id="modalSource"></span>
+        <span id="modalScore"></span>
+        <span id="modalVerified"></span>
+      </div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p  class="modal-company" id="modalCompany"></p>
+      <div class="modal-meta">
+        <span id="modalLocation"></span>
+        <span id="modalDate"></span>
+        <span id="modalSalary"></span>
+      </div>
+      <hr class="modal-divider" />
+      <div class="modal-description" id="modalDescription"></div>
+      <details class="reasoning-accordion hidden" id="modalReasoning">
+        <summary>AI match reasoning</summary>
+        <p class="reasoning-text" id="modalReasoningText"></p>
+      </details>
+      <details class="reasoning-accordion hidden" id="modalVerification">
+        <summary>Company verification notes</summary>
+        <p class="reasoning-text" id="modalVerificationText"></p>
+      </details>
+      <div class="modal-actions">
+        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          View on job site ↗
+        </a>
+        <button id="modalApplyBtn" class="btn btn-apply">Mark as Applied</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>For personal, non-commercial use only &nbsp;·&nbsp; Data sourced from MyCareersFuture, JobStreet, InternSG, Careers@Gov</p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

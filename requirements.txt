@@ -1,0 +1,40 @@
+# Required on Python 3.12+ where setuptools is no longer bundled
+# (playwright-stealth imports pkg_resources from setuptools)
+# playwright-stealth uses pkg_resources; setuptools 70+ broke that import on Python 3.12
+setuptools==69.5.1
+
+# Core web framework
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+
+# HTTP client (async-native)
+httpx==0.27.0
+
+# HTML parsing
+beautifulsoup4==4.12.3
+lxml==5.2.2
+
+# Browser automation + stealth
+playwright==1.44.0
+playwright-stealth==1.0.6
+
+# Scheduling
+apscheduler==3.10.4
+
+# Config
+python-dotenv==1.0.1
+
+# Data handling
+pandas==2.2.2
+
+# LLM evaluation pipeline
+groq>=0.9.0
+openai>=1.30.0
+pypdf>=4.2.0
+
+# Company verification – web search
+duckduckgo-search>=6.2.0
+
+# Date parsing
+python-dateutil>=2.9.0
+dateparser>=1.2.0

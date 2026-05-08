@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\User\\\\JobPortalScraper\" -Force)",
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\User\\\\JobPortalScraper\\\\static\" -Force)",
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\User\\\\JobPortalScraper\\\\logs\" -Force)",
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\User\\\\JobPortalScraper\\\\data\" -Force)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\User\\\\JobPortalScraper\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "Bash(.\\\\venv\\\\Scripts\\\\python.exe -m pip install \"duckduckgo-search>=6.2.0\" \"python-dateutil>=2.9.0\" --quiet)",
+      "WebFetch(domain:console.groq.com)",
+      "WebFetch(domain:groq.com)"
+    ]
+  }
+}

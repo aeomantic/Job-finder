@@ -1,0 +1,15 @@
+# company_urls.txt – External company career pages to scrape
+#
+# Add one URL per line. Lines starting with # or blank lines are ignored.
+# The scraper uses Playwright + Groq LLM to extract job listings from each page.
+#
+# Tips:
+#   - Use the listing/search page (not a single job page) so multiple jobs are extracted.
+#   - Filter for Singapore / internship in the URL query string if possible.
+#   - Requires GROQ_API_KEY to be set in .env.
+#
+# Examples (uncomment and modify as needed):
+# https://careers.shopee.sg/jobs/?type=internship
+# https://grab.careers/jobs/?country=Singapore&keywords=intern
+# https://www.sea.com/careers/jobs?location=Singapore
+# https://www.bytedance.com/en/jobs/search/?keywords=intern&location=Singapore
